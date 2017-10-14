@@ -3,7 +3,7 @@ import re
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from Clientapp.models import *
 from Clientapp.forms import *
-# from Clientapp.yowsup_integration.stack import *
+from Clientapp.yowsup_integration.stack import *
 
 #####################
 #   User Views
@@ -165,49 +165,49 @@ def adminReport(request):
 #                          Adding  Yowsup   Integration
 #
 # #######################################################################################################################
-# yowsup_handler = YowsupWebStack()
+yowsup_handler = YowsupWebStack()
 
-# # Starting the Whatsapp Stack Loop in a new thread.
-# # threading.Thread(target=yowsup_handler.start).start()
+# Starting the Whatsapp Stack Loop in a new thread.
+# threading.Thread(target=yowsup_handler.start).start()
 
-# # Access to yowsupweb layer
-# weblayer = yowsup_handler.get_web_layer()
-
-
-# def api(request, command):
-#     if command == 'login':
-#         if not weblayer.assertConnected():
-#             weblayer.login('918200594756', 'Db1rSq/g8EzVgs+LbWp2idQcUUc=')
-
-#     if command == 'connection_status':
-#         return HttpResponse(weblayer.assertConnected())
-
-#     if (command == 'send'):
-#         id = request.GET.get('id', '')
-#         if len(id) < 1:
-#             return HttpResponse(False)
-#         msg_object = Delivery_Status.objects.filter(id=id, delivery_status=0)
-#         if (len(msg_object) > 0):
-#             msg_object = msg_object[0]
-#             weblayer.send_message(msg_object)
-#             return HttpResponse(True)
-#     # Default Case if nothing else works
-#     return HttpResponse(False)
+# Access to yowsupweb layer
+weblayer = yowsup_handler.get_web_layer()
 
 
-# def api_mainpage(request, id=None):
-#     if id is None:
-#         msg_formats = [i for i in Whatsapp_Message_Format.objects.filter(user__is_active=True) if i.unsent_msg() > 0]
-#         template = "clientapp/whatsapp_mainpage.html"
-#         context = {'msg_formats': msg_formats}
-#         return render(request, template, context)
-#     else:
-#         obj1 = Delivery_Status.objects.filter(text_delivery__message_text__format__id=id, delivery_status=0)
-#         obj2 = Delivery_Status.objects.filter(image_delivery__message_image__format__id=id, delivery_status=0)
-#         obj3 = Delivery_Status.objects.filter(vcard_delivery__message__format__id=id, delivery_status=0)
+def api(request, command):
+    if command == 'login':
+        if not weblayer.assertConnected():
+            weblayer.login('918200594756', 'Db1rSq/g8EzVgs+LbWp2idQcUUc=')
 
-#         contacts = [msg.to_number for msg in obj1] + [msg.to_number for msg in obj2] + [msg.to_number for msg in obj3]
-#         weblayer.contacts_sync(contacts)
-#         template = "clientapp/whatsapp_message.html"
-#         context = {'text_messages': obj1 , 'image_messages': obj2, 'vcard_messages': obj3}
-#         return render(request, template, context)
+    if command == 'connection_status':
+        return HttpResponse(weblayer.assertConnected())
+
+    if (command == 'send'):
+        id = request.GET.get('id', '')
+        if len(id) < 1:
+            return HttpResponse(False)
+        msg_object = Delivery_Status.objects.filter(id=id, delivery_status=0)
+        if (len(msg_object) > 0):
+            msg_object = msg_object[0]
+            weblayer.send_message(msg_object)
+            return HttpResponse(True)
+    # Default Case if nothing else works
+    return HttpResponse(False)
+
+
+def api_mainpage(request, id=None):
+    if id is None:
+        msg_formats = [i for i in Whatsapp_Message_Format.objects.filter(user__is_active=True) if i.unsent_msg() > 0]
+        template = "clientapp/whatsapp_mainpage.html"
+        context = {'msg_formats': msg_formats}
+        return render(request, template, context)
+    else:
+        obj1 = Delivery_Status.objects.filter(text_delivery__message_text__format__id=id, delivery_status=0)
+        obj2 = Delivery_Status.objects.filter(image_delivery__message_image__format__id=id, delivery_status=0)
+        obj3 = Delivery_Status.objects.filter(vcard_delivery__message__format__id=id, delivery_status=0)
+
+        contacts = [msg.to_number for msg in obj1] + [msg.to_number for msg in obj2] + [msg.to_number for msg in obj3]
+        weblayer.contacts_sync(contacts)
+        template = "clientapp/whatsapp_message.html"
+        context = {'text_messages': obj1 , 'image_messages': obj2, 'vcard_messages': obj3}
+        return render(request, template, context)
