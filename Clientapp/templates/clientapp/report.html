@@ -19,20 +19,23 @@
 			    <thead>
 			    <tr>
 			        <th>Contact Number</th>
-			        <th>Campaign Name</th>
-			        <th>Message Text</th>
-			        <th>Added On</th>
-			        <th>Status</th>
+			        <th>Message Add Time</th>
+			        <th>Message ID</th>
+			        <th>Delivery Status</th>
+			        <th>Delivery Status</th>
+                    <th>Send Using</th>
 			    </tr>
 			    </thead>
 			    <tbody>
 		    	{% for msg in  individual_messages %}
 		    	<tr>
 			    	<td>{{msg.to_number}}</td>
-                    <td>{{msg.message_format.format_name}}</td>
-                    <td>{{msg.message_format.message_text}}</td>
                     <td>{{msg.added_on}}</td>
-                    <td>{% if msg.delivery_status > 0 %}<i class="fa fa-check-circle text-success"></i>{%else %} <b>Pending</b> {% endif %}</td>
+                    <td>{{msg.whatsapp_message_id}}</td>
+                    <td>{% if msg.delivery_status > 0 %}<i class="fa fa-check-circle text-success"></i>{%else %}<i class="fa fa-exclamation-circle"></i> {% endif %}</td>
+                    <td>{{msg.delivery_time}}</td>
+                    <td>{{msg.sent_using}}</td>
+
 			    </tr>	
 		    	{% endfor %}
 			   </tbody>
